@@ -6,7 +6,7 @@ console.time('read')
 const point1000k = require('./dataset/1000000p.json')
 //using for mid zoom level
 const hybridData = require('./dataset/10000p.json')
-//with high zoom level, i use dataset with 4m points
+
 
 console.timeEnd('read')
 const initMap = () =>{

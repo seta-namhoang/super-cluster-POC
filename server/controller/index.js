@@ -12,32 +12,31 @@ const isInside = (bbox, point) => {
 };
 
 const mapController = (req, res, next) => {
-  
   const { bbox, zoom } = req.query;
   console.time("start_getting_cluster");
-  
+
   const mapIndex = global.mapIndex;
   const hybridMapIndex = global.hybridMapIndex;
 
   const newBbox = bbox.map((item) => parseFloat(item));
   const newZoom = parseFloat(zoom);
-  console.log("newZoom", newZoom,'\n');
+  console.log("newZoom", newZoom, "\n");
   let cluster = [];
   if (newZoom >= 8) {
-  
     const features = pointsData.features;
-    for(let i =0 ; i < features.length; i++) {
-      if(isInside(newBbox, {
-        x: features[i].geometry.coordinates[0],
-        y: features[i].geometry.coordinates[1],
-      })) {
-        cluster.push(features[i])
+    for (let i = 0; i < features.length; i++) {
+      if (
+        isInside(newBbox, {
+          x: features[i].geometry.coordinates[0],
+          y: features[i].geometry.coordinates[1],
+        })
+      ) {
+        cluster.push(features[i]);
       }
     }
-  } else if (newZoom >= 3){
+  } else if (newZoom >= 4) {
     cluster = hybridMapIndex.getClusters(newBbox, newZoom);
-  }
-  else {
+  } else {
     cluster = mapIndex.getClusters(newBbox, newZoom);
   }
 
@@ -54,10 +53,53 @@ const mapController = (req, res, next) => {
     features: cluster,
   };
   console.timeEnd("start_getting_cluster");
-  console.log('\n');
+  console.log("\n");
+  res.send(featureCollection);
+};
+
+const liveDataController = (req, res, next) => {
+  const { bbox, zoom, random } = req.query;
+  console.log("run");
+  const newBbox = bbox.map((item) => parseFloat(item));
+  const newZoom = parseFloat(zoom);
+  console.log("newZoom", newZoom, "\n");
+  let cluster = [];
+
+  const features = pointsData.features;
+  for (let i = 0; i < features.length; i++) {
+    const randomOperator = Math.round(Math.random()) * 2 - 1;
+    if (
+      isInside(newBbox, {
+        x: features[i].geometry.coordinates[0],
+        y: features[i].geometry.coordinates[1],
+      })
+    ) {
+      const newX =
+        features[i].geometry.coordinates[0] +
+        parseFloat(randomOperator * (random / 10));
+      const newY =
+        features[i].geometry.coordinates[1] +
+        parseFloat(randomOperator * (random / 10));
+      const cloneFeature = features[i];
+      cloneFeature.geometry.coordinates = [newX, newY];
+      cluster.push(cloneFeature);
+    }
+  }
+
+  const featureCollection = {
+    type: "FeatureCollection",
+    crs: {
+      type: "name",
+      properties: {
+        name: "urn:ogc:def:crs:OGC:1.3:CRS84",
+      },
+    },
+    features: cluster,
+  };
   res.send(featureCollection);
 };
 
 module.exports = {
   mapController,
+  liveDataController,
 };
