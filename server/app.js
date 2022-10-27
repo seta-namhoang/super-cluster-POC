@@ -8,6 +8,7 @@ const { initMap } = require('./map/mapIndex')
 const cors = require('cors');
 const { getCacheInstance } = require('./cache');
 const cacheInstance = getCacheInstance();
+const mapRouter = require('./routes/index');
 var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,11 +33,8 @@ try {
   console.log(err);
 }
 //index map
-app.get('/cluster', mapController)
+app.use('/', mapRouter);
 
-app.get('/', (req, res) => {
-  res.send({ success: true })
-})
 
 // catch 404 and forward to error handler‰
 app.use(function (req, res, next) {

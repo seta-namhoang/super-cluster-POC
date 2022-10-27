@@ -76,9 +76,9 @@ const Map = () => {
       map.addSource("earthquakes", {
         type: "geojson",
         data: dataset,
-        cluster: true,
-        clusterMaxZoom: 14,
-        clusterRadius: 50,
+        // cluster: true,
+        // clusterMaxZoom: 14,
+        // clusterRadius: 50,
       });
         map.addLayer({
           id: "clusters",
