@@ -1,13 +1,11 @@
 var express = require('express');
-const {mapController,liveDataController} = require("../controller");
+const {mapController} = require("../controller");
 var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Expresssss' });
 });
-
-router.get('/liveData',liveDataController)
 
 router.get('/cluster', mapController)
 

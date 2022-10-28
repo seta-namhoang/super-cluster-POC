@@ -25,7 +25,7 @@ const initMap = () =>{
   console.time('init index hybrid') 
   const initHybridMapIndex = new Supercluster({
     radius: 50,
-    maxZoom: 18,
+    maxZoom: 8,
     nodeSize: 64
   })
   initHybridMapIndex.load(hybridData.features)
@@ -38,7 +38,7 @@ const initMap = () =>{
     console.time('index hybrid')
     const hybridMapIndex = new Supercluster({
       radius: 50,
-      maxZoom: 18,
+      maxZoom: 8,
       nodeSize: 64
     })
     hybridMapIndex.load(hybridData.features)
