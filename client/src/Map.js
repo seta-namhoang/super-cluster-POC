@@ -25,6 +25,9 @@ const Map = () => {
       bounds.getEast(),
       bounds.getNorth(),
     ];
+    if(currentInterval !== ''){
+      clearInterval(currentInterval);
+    }
     if (zoomLevel < 8) {
       axios
         .get(`http://localhost:3000/cluster`, {
@@ -40,9 +43,6 @@ const Map = () => {
           
         });
     }else{
-      if(currentInterval !== ''){
-        clearInterval(currentInterval);
-      }
       const intervalId = fakeLiveData(map);
       currentInterval = intervalId;
     }
