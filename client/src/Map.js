@@ -13,7 +13,7 @@ mapboxgl.accessToken =
 
 const Map = () => {
   const mapContainerRef = useRef(null);
-
+  let currentInterval =''
 
   const debounceFunction = debounce((map) => {
     const bounds = map.getBounds();
@@ -37,17 +37,22 @@ const Map = () => {
           const { data = [] } = res;
 
           map.getSource("earthquakes").setData(data);
-          console.log("data", data);
+          
         });
+    }else{
+      if(currentInterval !== ''){
+        clearInterval(currentInterval);
+      }
+      const intervalId = fakeLiveData(map);
+      currentInterval = intervalId;
     }
   }, 200);
 
   const fakeLiveData = useCallback((map) => {
     console.log('does it run');
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       console.log("run fake live data");
       const bounds = map.getBounds();
-      const boundsArr = bounds.toArray();
       const zoomLevel = map.getZoom();
       const bbox = [
         bounds.getWest(),
@@ -57,7 +62,7 @@ const Map = () => {
       ];
       if (zoomLevel >= 8) {
         axios
-          .get(`http://localhost:3000/liveData`, {
+          .get(`http://localhost:3000/cluster`, {
             params: {
               random: Math.random(),
               bbox: bbox,
@@ -70,6 +75,7 @@ const Map = () => {
           });
       }
     }, 1000);
+    return intervalId;
   });
 
   const handleClick = (map, e) => {
@@ -99,8 +105,7 @@ const Map = () => {
     });
 
     map.on("load", () => {
-      console.time("load");
-      // console.timeEnd("load");
+      
       map.addSource("earthquakes", {
         type: "geojson",
         data: dataset,
@@ -166,7 +171,7 @@ const Map = () => {
     map.on("click", "clusters", (e) => {
       handleClick(map, e);
     });
-    fakeLiveData(map);
+    
 
     // Add navigation control (the +/- zoom buttons)
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
